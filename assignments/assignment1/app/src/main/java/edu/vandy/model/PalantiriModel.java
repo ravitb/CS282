@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import edu.vandy.MVP;
-import edu.vandy.utils.Options;
 
 /**
  * This class is a proxy that provides access to the PalantiriManager.
@@ -45,7 +44,7 @@ public class PalantiriModel
     /**
      * Hook method called to shutdown the Model layer.
      *
-     * @param isChangeConfigurations
+     * @param isChangingConfigurations
      *        True if a runtime configuration triggered the onDestroy() call.
      */
     @Override

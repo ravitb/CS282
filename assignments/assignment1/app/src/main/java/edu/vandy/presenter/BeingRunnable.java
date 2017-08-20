@@ -198,6 +198,7 @@ public class BeingRunnable
     private boolean incrementGazingCountAndCheck(int beingId,
                                                  Palantir palantir) {
         // TODO - You fill in here.
+        return false;
     }
 
     /**

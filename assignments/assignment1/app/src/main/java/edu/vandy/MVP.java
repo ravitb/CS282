@@ -1,8 +1,9 @@
 package edu.vandy;
 
+import android.content.Intent;
+
 import java.util.List;
 
-import android.content.Intent;
 import edu.vandy.common.ContextView;
 import edu.vandy.common.ModelOps;
 import edu.vandy.common.PresenterOps;

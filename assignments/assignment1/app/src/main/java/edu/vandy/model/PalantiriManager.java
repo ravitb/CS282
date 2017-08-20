@@ -1,8 +1,10 @@
 package edu.vandy.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -16,7 +18,8 @@ public class PalantiriManager {
     /**
      * Debugging tag used by the Android logger.
      */
-    protected final static String TAG = 
+
+    protected final static String TAG =
         PalantiriManager.class.getSimpleName();
 
     /**
@@ -42,6 +45,14 @@ public class PalantiriManager {
         // use a "fair" implementation that mediates concurrent access
         // to the given Palantiri.
         // TODO -- you fill in here.
+
+        final int size = palantiri.size();
+        mAvailablePalantiri = new Semaphore(size);
+        mPalantiriMap = new HashMap<Palantir, Boolean>(size);
+        for (Palantir key:
+             palantiri) {
+            mPalantiriMap.put(key, true);
+        }
     }
 
     /**
@@ -56,6 +67,25 @@ public class PalantiriManager {
         // this key with "false" to indicate the Palantir isn't
         // available and then return that palantir to the client. 
         // TODO -- you fill in here.
+        synchronized(this) {
+
+            try {
+                mAvailablePalantiri.acquire();
+                Set set = mPalantiriMap.entrySet();
+                Iterator iterator = set.iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry me = (Map.Entry)iterator.next();
+                    if ((boolean)me.getValue()) {
+                        me.setValue(false);
+                        return (Palantir)me.getKey();
+                    }
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         // This shouldn't happen, but we need this here to make the
         // compiler happy.
@@ -71,6 +101,19 @@ public class PalantiriManager {
         // in a thread-safe manner and release the Semaphore if all
         // works properly.
         // TODO -- you fill in here.
+
+        synchronized (this) {
+            Set set = mPalantiriMap.entrySet();
+            Iterator iterator = set.iterator();
+            while(iterator.hasNext()) {
+                Map.Entry me = (Map.Entry)iterator.next();
+                if (!(boolean)me.getValue()) {
+                    me.setValue(false);
+                    mAvailablePalantiri.release();
+                }
+            }
+
+        }
 
     }
 

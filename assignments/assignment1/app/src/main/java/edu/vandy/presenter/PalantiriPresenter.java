@@ -1,20 +1,18 @@
 package edu.vandy.presenter;
 
+import android.content.Intent;
+import android.util.Log;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-import android.content.Intent;
-import android.util.Log;
 import edu.vandy.MVP;
 import edu.vandy.common.GenericPresenter;
 import edu.vandy.common.Utils;
 import edu.vandy.model.PalantiriModel;
 import edu.vandy.utils.Options;
 import edu.vandy.view.DotArrayAdapter.DotColor;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * This class manages the Palantiri simulation.  The simulation begins
@@ -259,6 +257,17 @@ public class PalantiriPresenter
         // Generate beingCount number of Threads that are stored in a
         // list and then start all the Threads in the List.
         // TODO - You fill in here.
+
+        mBeingThreads = new ArrayList<>(beingCount);
+
+        for (int i = 0; i < beingCount; i++) {
+//            Runnable task = () -> getModel().acquirePalantir();
+//            Thread worker = new Thread(task);
+            Thread worker = new Thread();
+            worker.setName(String.valueOf(i));
+            worker.start();
+            mBeingThreads.add(worker);
+        }
     }
 
     /**
@@ -270,6 +279,17 @@ public class PalantiriPresenter
         // finish and then calls mView.get().done() to inform the View
         // layer that the simulation is done.
         // TODO -- you fill in here.
+
+        for (Thread thread : mBeingThreads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        mView.get().done();
+
     }
 
     /**
@@ -283,6 +303,8 @@ public class PalantiriPresenter
         synchronized(this) {
             // Interrupt all the Threads.
             // TODO -- you fill in here.
+
+
 
             // Inform the user that we're shutting down the
             // simulation.
